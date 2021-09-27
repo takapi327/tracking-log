@@ -8,7 +8,12 @@ ThisBuild / startYear        := Some(2021)
 
 ThisBuild / scalaVersion := "2.13.3"
 
-version := "1.0.0-SNAPSHOT"
+/**
+ * Build mode
+ */
+import scala.sys.process._
+val branch  = ("git branch".lineStream_!).find(_.head == '*').map(_.drop(2)).getOrElse("")
+val release = (branch == "master" || branch.startsWith("release"))
 
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala)
@@ -27,7 +32,7 @@ scalacOptions ++= Seq(
 
 libraryDependencies ++= Seq(
   guice,
-  "org.uaparser" %% "uap-scala" % "0.13.0",
+  "org.uaparser" %% "uap-scala" % "0.13.0"
   /*
   "org.apache.logging.log4j" % "log4j-slf4j-impl" % "2.4.1",
   "org.apache.logging.log4j" % "log4j-api" % "2.4.1",
@@ -38,6 +43,27 @@ libraryDependencies ++= Seq(
   //"net.logstash.logback" % "logstash-logback-encoder" % "6.6"
 )
 
-Compile    / publishArtifact := false
-packageDoc / publishArtifact := false
-packageSrc / publishArtifact := false
+/** Setting sbt-release */
+import ReleaseTransformations._
+releaseVersionBump   := sbtrelease.Version.Bump.Bugfix
+releaseTagComment    := s"Releasing ${(ThisBuild / version).value}[ci skip]"
+releaseCommitMessage := s"Setting version to ${(ThisBuild / version).value}[ci skip]"
+
+publishTo := {
+  val path = if (release) "releases" else "snapshots"
+  Some("Takapi snapshots" at "s3:://maven.takapi.net.s3-ap-northeast-1.amazonaws.com/" + path)
+}
+Compile / publishArtifact := false
+
+releaseProcess := Seq[ReleaseStep](
+  checkSnapshotDependencies,
+  inquireVersions,
+  runClean,
+  setReleaseVersion,
+  commitReleaseVersion,
+  tagRelease,
+  publishArtifacts,
+  setNextVersion,
+  commitNextVersion,
+  pushChanges
+)
