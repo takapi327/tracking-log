@@ -8,9 +8,10 @@ ThisBuild / startYear        := Some(2021)
 
 ThisBuild / scalaVersion := "2.13.3"
 
-version := "1.0.0"
+version := "1.0.0-SNAPSHOT"
 
 lazy val root = (project in file("."))
+  .enablePlugins(PlayScala)
 
 scalacOptions ++= Seq(
   "-Xfatal-warnings",
@@ -36,3 +37,7 @@ libraryDependencies ++= Seq(
   //"ch.qos.logback" % "logback-classic" % "1.3.0-alpha10"
   //"net.logstash.logback" % "logstash-logback-encoder" % "6.6"
 )
+
+Compile    / publishArtifact := false
+packageDoc / publishArtifact := false
+packageSrc / publishArtifact := false
