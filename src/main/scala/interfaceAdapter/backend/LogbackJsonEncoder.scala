@@ -1,4 +1,4 @@
-package trackingLog.mvc
+package interfaceAdapter.backend
 
 import play.api.libs.json.Json
 
