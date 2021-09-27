@@ -16,7 +16,7 @@ val branch  = ("git branch".lineStream_!).find(_.head == '*').map(_.drop(2)).get
 val release = (branch == "master" || branch.startsWith("release"))
 
 lazy val root = (project in file("."))
-  .enablePlugins(PlayScala)
+  //.enablePlugins(PlayScala)
 
 scalacOptions ++= Seq(
   "-Xfatal-warnings",
@@ -32,14 +32,14 @@ scalacOptions ++= Seq(
 
 libraryDependencies ++= Seq(
   guice,
-  "org.uaparser" %% "uap-scala" % "0.13.0"
+  "org.uaparser" %% "uap-scala" % "0.13.0",
   /*
   "org.apache.logging.log4j" % "log4j-slf4j-impl" % "2.4.1",
   "org.apache.logging.log4j" % "log4j-api" % "2.4.1",
   "org.apache.logging.log4j" % "log4j-core" % "2.4.1",
    */
-  //"ch.qos.logback" % "logback-core" % "1.3.0-alpha10",
-  //"ch.qos.logback" % "logback-classic" % "1.3.0-alpha10"
+  "ch.qos.logback" % "logback-core"    % "1.3.0-alpha10",
+  "ch.qos.logback" % "logback-classic" % "1.3.0-alpha10"
   //"net.logstash.logback" % "logstash-logback-encoder" % "6.6"
 )
 
